@@ -1,143 +1,197 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Client Tracker</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
-    <script>
-        function calculateTotal(element) {
-            let row = element.closest("tr");
-            let duration = parseFloat(row.cells[2].querySelector("select").value);
-            let days = parseInt(row.cells[3].querySelector("select").value);
-            let totalHours = duration * days;
-            row.cells[4].querySelector("input").value = totalHours.toFixed(2);
-            let weeksInMonth = new Date().getDate() > 28 ? 5 : 4;
-            row.cells[5].querySelector("input").value = (totalHours * weeksInMonth).toFixed(2);
-        }
-
-        async function updateExcelFile() {
-            try {
-                const response = await fetch("/Greenville Scheduled Hours Tracking Template.xlsx"); // Update path to the actual Excel file
-                const arrayBuffer = await response.arrayBuffer();
-                const workbook = XLSX.read(arrayBuffer, { type: "array" });
-                let ws = workbook.Sheets['Conversion Chart'];
-                
-                let table = document.querySelector("table");
-                let rows = table.querySelectorAll("tbody tr");
-                let data = XLSX.utils.sheet_to_json(ws, { header: 1 });
-                
-                rows.forEach(row => {
-                    let rowData = [];
-                    let inputs = row.querySelectorAll("input, select");
-                    
-                    inputs.forEach(input => {
-                        rowData.push(input.tagName === "SELECT" ? input.options[input.selectedIndex].text : input.value);
-                    });
-                    data.push(rowData);
-                });
-                
-                let newWs = XLSX.utils.aoa_to_sheet(data);
-                workbook.Sheets[workbook.SheetNames[0]] = newWs;
-                let wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-                let blob = new Blob([wbout], { type: "application/octet-stream" });
-                let url = URL.createObjectURL(blob);
-                let a = document.createElement("a");
-                a.href = url;
-                a.download = "Updated_Client_Tracker.xlsx";
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            } catch (error) {
-                console.error("Error updating Excel file:", error);
-            }
-        }
-
-        function addClient() {
-            let table = document.querySelector("tbody");
-            let newRow = table.insertRow();
-            newRow.innerHTML = `
-                <td><input type="text" placeholder="Client Name"></td>
-                <td><input type="text" placeholder="Task"></td>
-                <td>
-                    <select onchange="calculateTotal(this)">
-                        <option value="0.25">15 minutes</option>
-                        <option value="0.5">30 minutes</option>
-                        <option value="0.75">45 minutes</option>
-                        <option value="1">60 minutes</option>
-                    </select>
-                </td>
-                <td>
-                    <select onchange="calculateTotal(this)">
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                    </select>
-                </td>
-                <td><input type="text" readonly></td>
-                <td><input type="text" readonly></td>
-                <td><button onclick="duplicateClient(this)">Duplicate</button></td>
-            `;
-        }
-
-        function duplicateClient(button) {
-            let row = button.closest("tr");
-            let table = document.querySelector("tbody");
-            let newRow = table.insertRow();
-            newRow.innerHTML = row.innerHTML;
-        }
-    </script>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.4">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
 </head>
 <body>
-    <h1>Client Tracker</h1>
-    <button onclick="addClient()">New Client</button>
-    <button onclick="updateExcelFile()">Update Excel</button>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Client</th>
-                <th>Task</th>
-                <th>Duration</th>
-                <th>Days Per Week</th>
-                <th>Total Hours</th>
-                <th>Monthly Total</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><input type="text" placeholder="Client Name"></td>
-                <td><input type="text" placeholder="Task"></td>
-                <td>
-                    <select onchange="calculateTotal(this)">
-                        <option value="0.25">15 minutes</option>
-                        <option value="0.5">30 minutes</option>
-                        <option value="0.75">45 minutes</option>
-                        <option value="1">60 minutes</option>
-                    </select>
-                </td>
-                <td>
-                    <select onchange="calculateTotal(this)">
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                    </select>
-                </td>
-                <td><input type="text" readonly></td>
-                <td><input type="text" readonly></td>
-                <td><button onclick="duplicateClient(this)">Duplicate</button></td>
-            </tr>
-        </tbody>
-    </table>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Client Tracker&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function calculateTotal(element) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let row = element.closest("tr");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let duration = parseFloat(row.cells[2].querySelector("select").value);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let days = parseInt(row.cells[3].querySelector("select").value);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let totalHours = duration * days;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>row.cells[4].querySelector("input").value = totalHours.toFixed(2);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let weeksInMonth = new Date().getDate() &gt; 28 ? 5 : 4;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>row.cells[5].querySelector("input").value = (totalHours * weeksInMonth).toFixed(2);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function downloadExcel() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let table = document.querySelector("table");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let rows = table.querySelectorAll("tr");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let data = [];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>let headers = [];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>rows[0].querySelectorAll("th").forEach(th =&gt; headers.push(th.innerText));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>data.push(headers);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>for (let i = 1; i &lt; rows.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>let rowData = [];</p>
+<p class="p1"><span class="Apple-converted-space">                </span>let cells = rows[i].querySelectorAll("td input, td select");</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>cells.forEach(cell =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (cell.tagName === "SELECT") {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>rowData.push(cell.options[cell.selectedIndex].text);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>rowData.push(cell.value);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">                </span>data.push(rowData);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>let ws = XLSX.utils.aoa_to_sheet(data);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let wb = XLSX.utils.book_new();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>XLSX.utils.book_append_sheet(wb, ws, "Client Data");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>XLSX.writeFile(wb, "Client_Tracker.xlsx");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>clearTable();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>alert("Your data has been exported to Excel. Please check your downloaded file.\nNote: The data is NOT saved online.");</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function clearTable() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let table = document.querySelector("tbody");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>table.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;td&gt;&lt;input type="text" placeholder="Client Name"&gt;&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;td&gt;&lt;input type="text" placeholder="Task"&gt;&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;select onchange="calculateTotal(this)"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="0.25"&gt;15 minutes&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="0.5"&gt;30 minutes&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="0.75"&gt;45 minutes&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="1"&gt;60 minutes&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;select onchange="calculateTotal(this)"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="0"&gt;0&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="1"&gt;1&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="2"&gt;2&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="3"&gt;3&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="4"&gt;4&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="5"&gt;5&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="6"&gt;6&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="7"&gt;7&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;td&gt;&lt;input type="text" readonly&gt;&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;td&gt;&lt;input type="text" readonly&gt;&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;td&gt;&lt;button onclick="duplicateClient(this)"&gt;Duplicate&lt;/button&gt;&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function addClient() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let table = document.querySelector("tbody");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let newRow = table.insertRow();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>newRow.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;td&gt;&lt;input type="text" placeholder="Client Name"&gt;&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;td&gt;&lt;input type="text" placeholder="Task"&gt;&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;select onchange="calculateTotal(this)"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="0.25"&gt;15 minutes&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="0.5"&gt;30 minutes&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="0.75"&gt;45 minutes&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="1"&gt;60 minutes&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;select onchange="calculateTotal(this)"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="0"&gt;0&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="1"&gt;1&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="2"&gt;2&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="3"&gt;3&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="4"&gt;4&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="5"&gt;5&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="6"&gt;6&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="7"&gt;7&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;td&gt;&lt;input type="text" readonly&gt;&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;td&gt;&lt;input type="text" readonly&gt;&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;td&gt;&lt;button onclick="duplicateClient(this)"&gt;Duplicate&lt;/button&gt;&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function duplicateClient(button) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let row = button.closest("tr");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let table = document.querySelector("tbody");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let newRow = table.insertRow();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>row.querySelectorAll("td").forEach((cell, index) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>let newCell = newRow.insertCell(index);</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (cell.querySelector("input")) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>let input = cell.querySelector("input");</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>let newInput = document.createElement("input");</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>newInput.type = "text";</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>newInput.value = input.value;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>newInput.placeholder = input.placeholder;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>newInput.readOnly = input.readOnly;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>newCell.appendChild(newInput);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} else if (cell.querySelector("select")) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>let select = cell.querySelector("select");</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>let newSelect = document.createElement("select");</p>
+<p class="p2"><span class="Apple-converted-space">                    </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>Array.from(select.options).forEach(option =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>let newOption = document.createElement("option");</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>newOption.value = option.value;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>newOption.text = option.text;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>newSelect.appendChild(newOption);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>newSelect.value = select.value;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>newSelect.setAttribute("onchange", "calculateTotal(this)");</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>newCell.appendChild(newSelect);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>newCell.innerHTML = cell.innerHTML;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;h1&gt;Client Tracker&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button onclick="addClient()"&gt;New Client&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button onclick="downloadExcel()"&gt;Download Excel&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;table border="1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;Client&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;Task&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;Duration&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;Days Per Week&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;Total Hours&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;Monthly Total&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;Actions&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;td&gt;&lt;input type="text" placeholder="Client Name"&gt;&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;td&gt;&lt;input type="text" placeholder="Task"&gt;&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;select onchange="calculateTotal(this)"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="0.25"&gt;15 minutes&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="0.5"&gt;30 minutes&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="0.75"&gt;45 minutes&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="1"&gt;60 minutes&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;select onchange="calculateTotal(this)"&gt;</p>
 </body>
 </html>
