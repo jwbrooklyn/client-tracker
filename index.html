@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Tracker</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
+    <script>
+        function calculateTotal(element) {
+            let row = element.closest("tr");
+            let duration = parseFloat(row.cells[2].querySelector("select").value);
+            let days = parseInt(row.cells[3].querySelector("select").value);
+            let totalHours = duration * days;
+            row.cells[4].querySelector("input").value = totalHours.toFixed(2);
+            let weeksInMonth = new Date().getDate() > 28 ? 5 : 4;
+            row.cells[5].querySelector("input").value = (totalHours * weeksInMonth).toFixed(2);
+        }
+
+        async function updateExcelFile() {
+            try {
+                const response = await fetch("/Greenville Scheduled Hours Tracking Template.xlsx"); // Update path to the actual Excel file
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: "array" });
+                let ws = workbook.Sheets['Conversion Chart'];
+                
+                let table = document.querySelector("table");
+                let rows = table.querySelectorAll("tbody tr");
+                let data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+                
+                rows.forEach(row => {
+                    let rowData = [];
+                    let inputs = row.querySelectorAll("input, select");
+                    
+                    inputs.forEach(input => {
+                        rowData.push(input.tagName === "SELECT" ? input.options[input.selectedIndex].text : input.value);
+                    });
+                    data.push(rowData);
+                });
+                
+                let newWs = XLSX.utils.aoa_to_sheet(data);
+                workbook.Sheets[workbook.SheetNames[0]] = newWs;
+                let wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+                let blob = new Blob([wbout], { type: "application/octet-stream" });
+                let url = URL.createObjectURL(blob);
+                let a = document.createElement("a");
+                a.href = url;
+                a.download = "Updated_Client_Tracker.xlsx";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } catch (error) {
+                console.error("Error updating Excel file:", error);
+            }
+        }
+
+        function addClient() {
+            let table = document.querySelector("tbody");
+            let newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td><input type="text" placeholder="Client Name"></td>
+                <td><input type="text" placeholder="Task"></td>
+                <td>
+                    <select onchange="calculateTotal(this)">
+                        <option value="0.25">15 minutes</option>
+                        <option value="0.5">30 minutes</option>
+                        <option value="0.75">45 minutes</option>
+                        <option value="1">60 minutes</option>
+                    </select>
+                </td>
+                <td>
+                    <select onchange="calculateTotal(this)">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                    </select>
+                </td>
+                <td><input type="text" readonly></td>
+                <td><input type="text" readonly></td>
+                <td><button onclick="duplicateClient(this)">Duplicate</button></td>
+            `;
+        }
+
+        function duplicateClient(button) {
+            let row = button.closest("tr");
+            let table = document.querySelector("tbody");
+            let newRow = table.insertRow();
+            newRow.innerHTML = row.innerHTML;
+        }
+    </script>
+</head>
+<body>
+    <h1>Client Tracker</h1>
+    <button onclick="addClient()">New Client</button>
+    <button onclick="updateExcelFile()">Update Excel</button>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Client</th>
+                <th>Task</th>
+                <th>Duration</th>
+                <th>Days Per Week</th>
+                <th>Total Hours</th>
+                <th>Monthly Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="text" placeholder="Client Name"></td>
+                <td><input type="text" placeholder="Task"></td>
+                <td>
+                    <select onchange="calculateTotal(this)">
+                        <option value="0.25">15 minutes</option>
+                        <option value="0.5">30 minutes</option>
+                        <option value="0.75">45 minutes</option>
+                        <option value="1">60 minutes</option>
+                    </select>
+                </td>
+                <td>
+                    <select onchange="calculateTotal(this)">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                    </select>
+                </td>
+                <td><input type="text" readonly></td>
+                <td><input type="text" readonly></td>
+                <td><button onclick="duplicateClient(this)">Duplicate</button></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
